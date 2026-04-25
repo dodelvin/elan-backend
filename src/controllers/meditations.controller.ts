@@ -38,7 +38,7 @@ export async function getById(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const doc = await getDb().collection('meditations').doc(req.params.id).get();
+  const doc = await getDb().collection('meditations').doc(String(req.params.id)).get();
 
   if (!doc.exists) {
     res.status(404).json({ error: 'Meditation not found' });

@@ -144,7 +144,7 @@ export async function deleteMeal(req: Request, res: Response): Promise<void> {
 
   await getDb()
     .collection('users').doc(uid)
-    .collection('meals').doc(req.params.id)
+    .collection('meals').doc(String(req.params.id))
     .delete();
 
   res.json({ ok: true, deleted: req.params.id });

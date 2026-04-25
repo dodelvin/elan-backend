@@ -96,7 +96,7 @@ export async function toggleLike(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const ref = getDb().collection('posts').doc(req.params.id);
+  const ref = getDb().collection('posts').doc(String(req.params.id));
   const doc = await ref.get();
 
   if (!doc.exists) {
@@ -135,7 +135,7 @@ export async function addComment(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const ref = getDb().collection('posts').doc(req.params.id);
+  const ref = getDb().collection('posts').doc(String(req.params.id));
   const doc = await ref.get();
 
   if (!doc.exists) {
