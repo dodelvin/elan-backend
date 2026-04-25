@@ -32,28 +32,30 @@ export function initFirebase(): void {
   if (initialised) return;
 
   const filePath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
+  const base64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
   const projectId = process.env.FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
 
   try {
-    if (filePath && fs.existsSync(path.resolve(filePath))) {
-      // Mode 1 — load from JSON file
+    if (base64) {
+      // Mode 0 — decode entire service account from base64 (most reliable for hosting)
+      const decoded = Buffer.from(base64, 'base64').toString('utf8');
+      const serviceAccount = JSON.parse(decoded);
+      admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+      console.log('[firebase] initialised from base64 env var');
+    } else if (filePath && fs.existsSync(path.resolve(filePath))) {
       const raw = fs.readFileSync(path.resolve(filePath), 'utf8');
       const serviceAccount = JSON.parse(raw);
       admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
       console.log('[firebase] initialised from service account file');
     } else if (projectId && clientEmail && privateKey) {
-      // Mode 2 — load from inline env vars
       admin.initializeApp({
         credential: admin.credential.cert({ projectId, clientEmail, privateKey })
       });
       console.log('[firebase] initialised from env vars');
     } else {
-      // Phase 2 fallback: skip init so the server still starts without Firebase
-      // configured. Routes that need Firestore will return 503 until Phase 3.
       console.warn('[firebase] no credentials found — running in stub mode');
-      console.warn('[firebase] set FIREBASE_SERVICE_ACCOUNT_PATH in .env to enable');
       return;
     }
 
