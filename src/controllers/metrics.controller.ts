@@ -10,6 +10,7 @@
  *   - getHomeOverview()   bundled stats + goals for the Home screen
  */
 
+
 import { Request, Response } from 'express';
 import { getDb, isFirebaseReady } from '../config/firebase.js';
 
