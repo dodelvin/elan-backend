@@ -74,7 +74,7 @@ export async function saveToday(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const { water, steps, sleep, mood, mindfulness } = req.body;
+  const { water, steps, sleep, mood, mindfulness, stress } = req.body;
   const date = todayKey();
 
   // Build the patch object — only include fields the client sent.
@@ -84,7 +84,7 @@ export async function saveToday(req: Request, res: Response): Promise<void> {
   if (sleep !== undefined)        update.sleep = sleep;
   if (mood !== undefined)         update.mood = mood;
   if (mindfulness !== undefined)  update.mindfulness = mindfulness;
-
+  if (stress !== undefined)       update.stress = stress;
   await getDb()
     .collection('users').doc(uid)
     .collection('metrics').doc(date)
